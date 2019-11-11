@@ -14,13 +14,12 @@ namespace Weather.MobileCore
     public partial class MainPage : ContentPage
     {
         WeatherViewModel vm;
-        WeatherViewModel VM => vm ?? (vm = (WeatherViewModel)BindingContext);
+        WeatherViewModel VM => vm ??= (WeatherViewModel)BindingContext;
+
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = vm = new WeatherViewModel();
-
-            // to use gRPC use new WeatherViewModel(App.GRPCBackendUrl);
+            BindingContext = vm = new WeatherViewModel(App.GRPCBackendUrl);
 
             ImageSeattle.GestureRecognizers.Add(new TapGestureRecognizer
             {
@@ -32,7 +31,7 @@ namespace Weather.MobileCore
             });
         }
 
-        protected async override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -47,7 +46,8 @@ namespace Weather.MobileCore
             try
             {
                 //Use InitializeWeatherStream for gRPC
-                await VM.GetWeatherViaRest();
+                //await VM.GetWeatherViaRest();
+                await VM.InitializeWeatherStream();
             }
             catch (Exception ex)
             {

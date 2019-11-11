@@ -3,6 +3,8 @@ using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Grpc.Net.Client;
+using WeatherClientLib;
 
 namespace WeatherWinFormsFx
 {
@@ -20,8 +22,8 @@ namespace WeatherWinFormsFx
 
         private async void PollWeather()
         {
-            var weather = await Task.Run(() => GetDummyData());
-            UpdateForm(weather);
+            //var weather = await Task.Run(() => GetDummyData());
+            //UpdateForm(weather);
 
             // To switch from using the dummy data to real gRPC service:
             //  1. Port the application to .NET Core 3.
@@ -29,13 +31,28 @@ namespace WeatherWinFormsFx
             //  3. Remove two lines above, GetDummyData() method and WeatherResponse class from this file.
             //  4. Uncomment the lines bellow add required usings.
             //
-            //var client = new WeatherClient(GrpcChannel.ForAddress(serviceUrl));
-            //var weatherService = new GrpcWeatherForecastService(client);
+            var client = new Weather.Weather.WeatherClient(GrpcChannel.ForAddress(serviceUrl));
+            var weatherService = new GrpcWeatherForecastService(client);
 
-            //await foreach (var message in weatherService.GetStreamingWeather(cts.Token))
-            //{
-            //    UpdateForm(message);
-            //};
+            await foreach (Weather.WeatherResponse message in weatherService.GetStreamingWeather(cts.Token))
+            {
+                WeatherWinFormsFx.WeatherResponse internalResponse = new WeatherResponse()
+                {
+                    Location = message.Location,
+                    WeatherText = message.WeatherText,
+                    WeatherIcon = message.WeatherIcon,
+                    IsDayTime = message.IsDayTime,
+                    Temperature = message.Temperature,
+                    RelativeHumidity = message.RelativeHumidity,
+                    WindSpeed = message.WindSpeed,
+                    Pressure = message.Pressure,
+                    UVIndex = message.UVIndex,
+                    RetrievedDateTimeOffset = message.RetrievedDateTimeOffset,
+                    WeartherUri = message.WeartherUri
+                };
+
+                UpdateForm(internalResponse);
+            };
         }
 
         private WeatherResponse GetDummyData()
@@ -56,22 +73,7 @@ namespace WeatherWinFormsFx
             };
         }
 
-        public class WeatherResponse
-        {
-            public string Location { get; set; }
-            public string WeatherText { get; set; }
-            public Int32 WeatherIcon { get; set; }
-            public string WeartherUri { get; set; }
-            public bool IsDayTime { get; set; }
-            public float Temperature { get; set; }
-            public float RelativeHumidity { get; set; }
-            public float WindSpeed { get; set; }
-            public Int32 UVIndex { get; set; }
-            public float Pressure { get; set; }
-            public float Past6HourMin { get; set; }
-            public float Past6HourMax { get; set; }
-            public DateTimeOffset RetrievedDateTimeOffset { get; set; }
-        }
+        
 
         private void UpdateForm(WeatherResponse weatherResponse)
         {
@@ -102,5 +104,22 @@ namespace WeatherWinFormsFx
                 isCollapsed = true;
             }
         }
+    }
+
+    public class WeatherResponse
+    {
+        public string Location { get; set; }
+        public string WeatherText { get; set; }
+        public Int32 WeatherIcon { get; set; }
+        public string WeartherUri { get; set; }
+        public bool IsDayTime { get; set; }
+        public float Temperature { get; set; }
+        public float RelativeHumidity { get; set; }
+        public float WindSpeed { get; set; }
+        public Int32 UVIndex { get; set; }
+        public float Pressure { get; set; }
+        public float Past6HourMin { get; set; }
+        public float Past6HourMax { get; set; }
+        public DateTimeOffset RetrievedDateTimeOffset { get; set; }
     }
 }

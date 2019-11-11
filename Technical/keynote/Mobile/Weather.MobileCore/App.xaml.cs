@@ -11,11 +11,11 @@ namespace Weather.MobileCore
         //To debug on Android emulators run the web backend against .NET Core not IIS
         //If using other emulators besides stock Google images you may need to adjust the IP address
 
-        public static string RestBackendUrl = 
-           DeviceInfo.Platform  == DevicePlatform.Android ? "http://10.0.2.2:5051" : "http://localhost:5051";
+        //public static string RestBackendUrl = 
+        //   DeviceInfo.Platform  == DevicePlatform.Android ? "http://10.0.2.2:5051" : "http://localhost:5051";
 
         // Publish your backend to Azure to use gRPC
-        public static string GRPCBackendUrl = "https://yourbackend.azurewebsites.net";
+        public static string GRPCBackendUrl = "https://grpc-core.azurewebsites.net";
 
         public App()
         {

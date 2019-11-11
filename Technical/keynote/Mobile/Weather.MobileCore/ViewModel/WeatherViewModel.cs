@@ -120,17 +120,17 @@ namespace Weather.MobileCore.ViewModel
         }
 
 
-        public async Task GetWeatherViaRest()
-        {
-            var httpClient = new HttpClient();
-            var client = new WeatherRestClient(App.RestBackendUrl, httpClient);
+        //public async Task GetWeatherViaRest()
+        //{
+        //    var httpClient = new HttpClient();
+        //    var client = new WeatherRestClient(App.RestBackendUrl, httpClient);
 
-            var message = await client.JsonAsync();
+        //    var message = await client.JsonAsync();
 
-            UpdateWeather((int)message.Temperature, message.WeatherText,
-                              !message.IsDayTime, null, message.WeartherUri,
-                              (int)message.Past6HourMin, (int)message.Past6HourMax, (float)message.Pressure,
-                              message.UvIndex, (float)message.WindSpeed, message.WindDirection, (int)message.RelativeHumidity);
-        }
+        //    UpdateWeather((int)message.Temperature, message.WeatherText,
+        //                      !message.IsDayTime, null, message.WeartherUri,
+        //                      (int)message.Past6HourMin, (int)message.Past6HourMax, (float)message.Pressure,
+        //                      message.UvIndex, (float)message.WindSpeed, message.WindDirection, (int)message.RelativeHumidity);
+        //}
     }
 }
